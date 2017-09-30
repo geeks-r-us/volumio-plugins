@@ -1,0 +1,8 @@
+{
+    "discoverable":{
+        "type": "boolean",
+        "value": false
+    },
+    "pairedDevices":{
+    }
+}

@@ -1,0 +1,28 @@
+{
+  "name": "bluetooth_controller",
+  "version": "1.0.0",
+  "description": "Manage Bluetooth connections",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "geeks-r-us",
+  "license": "",
+  "volumio_info": {
+    "prettyName": "Bluetooth Manager",
+    "icon": "fa-bluetooth",
+    "plugin_type": "audio_interface",
+    "boot_priority": 1
+  },
+  "dependencies": {
+    "fs-extra": "^0.28.0",
+    "kew": "^0.7.0",
+    "v-conf": "^0.10.0",
+    "socket.io-client": "^1.4.5",
+    "bluetoothctl": "^1.0.1",
+    "child_process": "^1.0.2",
+    "udev": "^0.4.0",
+    "input-event": "^1.2.2",
+    "strongly-typed-events": "^1.0.1"
+  }
+}
