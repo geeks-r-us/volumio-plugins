@@ -76,7 +76,7 @@ class BluetoothController{
         });
     
         self.commandRouter.executeOnPlugin('music_service', 'mpd', 'registerConfigCallback', 
-            ['audio_interface', 'bluetooth_controller', 'getMPDConfigString']
+            {type: 'audio_interface', plugin: 'bluetooth_controller', data: 'getMPDConfigString'}
         );
 
         defer.resolve();
