@@ -54,6 +54,17 @@ class BluetoothController{
 
         this.socket = io.connect('http://localhost:3000');
         
+        blue.on(blue.bluetoothEvents.DeviceSignalLevel, function(devices, mac, signal){
+            // send to gui
+        });
+
+        blue.on(blue.bluetoothEvents.Device, function(devices)
+        {
+            // send to gui
+
+            self.deviceListChanged(devices);
+        });
+
         this.initBluetooth();
         this.avrcpMonitor = new avrcp(this.context);
         this.avrcpMonitor.onKeyPress.subscribe(function(event) {
@@ -186,6 +197,17 @@ class BluetoothController{
         this.logger.info('Found bluetooth devices: ' + JSON.stringify(result, null, 4));
         
         return result; 
+    }
+
+    private deviceListChanged(devices: any) {
+        let self = this;
+        self.logger.info('Device list changed: ');
+        for (var device of devices) {
+            self.logger.info(JSON.stringify(device, null, 4));
+            if(device.trusted) {
+                self.avrcpMonitor.addDevice(device.mac.toString());
+            }
+        }
     }
     
     // connects the specified bluetooth device            
