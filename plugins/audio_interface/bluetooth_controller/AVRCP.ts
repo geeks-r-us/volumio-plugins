@@ -5,7 +5,8 @@ import {SimpleEventDispatcher, ISimpleEvent} from 'strongly-typed-events';
 interface DeviceListEntry {
     virtualPath: string,
     devicePath: string,
-    inputEvent : any
+    inputEvent : any,
+    keyboard: any
 }
 
 interface DeviceList {
@@ -44,15 +45,22 @@ class AVRCPController {
         });
     
         self.udevMonitor.on('remove', function(device: any){
-            self.logger.info('removed device ' + JSON.stringify(device,null,4));
+            self.logger.info('AVRCP: removed device ' + JSON.stringify(device,null,4));
             if(device.DEVNAME) {
                 for(let mac in self.devicelist) {
                     if(self.devicelist[mac].devicePath == device.DEVNAME) {
+                        self.devicelist[mac].keyboard.close();                        
+                        delete self.devicelist[mac].keyboard;
                         self.devicelist[mac].inputEvent.close();
+                        delete self.devicelist[mac].inputEvent;
+                        self.devicelist[mac].devicePath = "";
+                        self.devicelist[mac].virtualPath = "";
+                        self.logger.info('AVRCP: removed device '+ mac + ' successfuly');
                     }
                 }
             }
         });
+
     }
 
     private handleInputDevice(device:any) {
@@ -73,22 +81,21 @@ class AVRCPController {
         self.logger.info('AVRCP: new input event found :' + device.DEVPATH );
         
         for( let mac in self.devicelist) {
-            self.logger.info('AVRCP: testing MAC '+ mac);
-            self.logger.info('AVRCP: VP = ' + JSON.stringify(self.devicelist[mac]));
             if (device.DEVPATH.startsWith(self.devicelist[mac].virtualPath)) {
                 self.logger.info('AVRCP: accepted input event');
                 let item = self.devicelist[mac];
                 item.devicePath = device.DEVNAME;
                 self.logger.info('AVRCP: added input event');
-                let input = new InputEvent(item.devicePath);
+                item.inputEvent = new InputEvent(item.devicePath);
+                item.inputEvent.on('error', function(err){});
                 self.logger.info('AVRCP: created input event');
-                item.inputEvent = new InputEvent.Keyboard(input);
                 self.logger.info('AVRCP: created keyboard');
-                self.logger.info('AVRCP: register keyboard for input ' + input);
-                item.inputEvent.on('keypress', function (key){
+                self.logger.info('AVRCP: register keyboard for input ' + item.inputEvent);
+                item.keyboard.on('keypress', function (key){
                     self.logger.info('AVRCP detected keypress : ' + key);
                     self.keyPressEvent.dispatch(key);
                 });
+                item.keyboard.fd.on('error', function(err){});
                 return;           
             }
         }
@@ -104,7 +111,7 @@ class AVRCPController {
         self.logger.info('AVRCP: adding device: ' + mac);
         let known =  self.devicelist[mac];
         if(!known) {
-            self.devicelist[mac] = {virtualPath : '', devicePath : '', inputEvent : null};
+            self.devicelist[mac] = {virtualPath : '', devicePath : '', inputEvent : null, keyboard : null};
         }
         self.logger.info('known: '+ JSON.stringify(self.devicelist, null, 4));
     }
