@@ -67,11 +67,11 @@ echo "  Creating chromium kiosk start script"
 echo "#!/bin/bash
 xset +dpms
 xset s blank
-xset 0 0 120
+xset dpms 0 0 120
 openbox-session &
 while true; do
   /usr/bin/chromium-browser \\
-    --no-touch-pinch \\
+    --disable-pinch \\
     --kiosk \\
     --no-first-run \\
     --disable-3d-apis \\
@@ -95,7 +95,7 @@ After=volumio.service
 Type=simple
 User=root
 Group=root
-ExecStart=/usr/bin/startx /etc/X11/Xsession /opt/volumiokiosk.sh
+ExecStart=/usr/bin/startx /etc/X11/Xsession /opt/volumiokiosk.sh -- -nocursor
 # Give a reasonable amount of time for the server to start up/shut down
 TimeoutSec=300
 [Install]
