@@ -146,7 +146,7 @@ class ControllerCdio {
             uri: 'cdio', 
             plugin_type: 'music_service', 
             plugin_name: 'cdplayer',
-            albumart: '/albumart?sourceicon=music_service/cdplayer/icon.svg'
+            albumart: '/albumart?sourceicon=music_service/cdplayer/icon.png'
         };
         this.commandRouter.volumioAddToBrowseSources(data);
     }
